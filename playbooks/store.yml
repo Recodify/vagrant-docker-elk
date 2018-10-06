@@ -1,0 +1,51 @@
+- name: "Adds the EK in a ELK stack"
+  hosts: store
+  sudo: true
+  vars:
+  - logstashConfigPath: "/config/elk/logstash"
+  - logstashContainerName: "logstash"
+  - logstashImage: "logstash:2.2.1-1"
+  tasks:
+  - name: "Create ELK folder on remote"
+    file:
+      path: "/config/elk"
+      state: directory
+  - name: "Create Logstash folder on remote"
+    file:
+      path: "/config/elk/logstash"
+      state: directory
+  - name: "Transfer ElasticSearch config"
+    copy:
+      src: "files/elasticsearch.yml"
+      dest: "/config/elk/elasticsearch.yml"
+  - name: "Transfer LogStash config"
+    template:
+      src: "templates/logstash.conf.j2"
+      dest: "{{ logstashConfigPath }}/logstash.conf"
+  - name: "Add ElasticSearch Data volume"
+    docker:
+      name: "elasticsearch_data"
+      image: "elasticsearch:2.0.0"
+      command: "/bin/bash"
+  - name: "Add ElasticSearch"
+    docker:
+      name: "elasticsearch"
+      image: "elasticsearch:2.0.0"
+      command: "elasticsearch -Des.network.host=0.0.0.0"
+      ports:
+        - 9200:9200
+      volumes_from:
+      - "elasticsearch_data"
+      volumes:
+        - "/config/elk/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+  - name: "Add logstash"
+    docker:
+      name: "{{ logstashContainerName }}"
+      image: "{{ logstashImage }}"
+      command: "logstash -f /config-dir/logstash.conf"
+      volumes:
+      - "{{ logstashConfigPath }}:/config-dir"
+      ports:
+      - "5000:5000"
+      links:
+        - "elasticsearch"

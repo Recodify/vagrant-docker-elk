@@ -1,0 +1,10 @@
+[kibana]
+localhost ansible_connection=local
+
+[store]
+localhost ansible_connection=local
+
+[store:vars]
+rabbitQueue=localQueue
+rabbitHost=localhost
+rabbitExchange=localExchange

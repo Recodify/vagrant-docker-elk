@@ -1,0 +1,24 @@
+---
+- name: "Adds the K for an ELK stack"
+  hosts: kibana
+  sudo: true
+  vars_files:
+  - kibanaVars.yml
+  tasks:
+  - name: "Add Kibana"
+    docker:
+      name: "kibana"
+      image: kibana:4.2.0
+      restart_policy: always
+      env:
+        ELASTICSEARCH_URL: "http://{{ hostvars[groups['store'][0]]['ansible_hostname'] }}:9200"
+  - name: "Add nginx"
+    docker:
+      name: "nginx"
+      image: "collinsongroup/nginxpasswordproxy:0.0.2"
+      ports:
+      - "8000:80"
+      links:
+      - "kibana"
+      env:
+        PASSTHRU_DESTINATION: "http://kibana:5601"

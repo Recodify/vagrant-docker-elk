@@ -1,0 +1,14 @@
+input { rabbitmq {
+        exchange => "{{ rabbitExchange }}"
+        host => "{{ rabbitHost }}"
+        queue => "{{ rabbitQueue }}"
+        auto_delete => false
+        passive => true
+        durable => true
+  } }
+output {
+    stdout { }
+    elasticsearch {
+        hosts => "elasticsearch"
+    }
+}

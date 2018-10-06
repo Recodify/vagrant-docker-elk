@@ -1,0 +1,14 @@
+---
+- name: "Adds the pre-reqs for a ELK stack"
+  hosts: all
+  sudo: true
+  tasks:
+  - name: Add pip
+    apt:
+      name: python-pip
+  - name: Add Python Docker Bindings
+    pip:
+      name: docker-py
+
+- include: store.yml
+- include: kibana.yml

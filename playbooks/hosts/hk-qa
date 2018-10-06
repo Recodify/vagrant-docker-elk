@@ -1,0 +1,10 @@
+[kibana]
+hk-qa-monitor.cloudapp.net
+
+[store]
+hk-qa-monitor.cloudapp.net
+
+[store:vars]
+rabbitQueue=eventlog-hk-qa
+rabbitHost=loyappeurope01.cloudapp.net
+rabbitExchange=eventlog-hk-qa
